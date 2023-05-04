@@ -77,7 +77,6 @@ from charmcraft.env import (
     get_managed_environment_project_path,
     is_charmcraft_running_in_managed_mode,
 )
-from charmcraft.parts import process_part_config
 from charmcraft.utils import get_host_architecture, load_yaml
 
 
@@ -349,8 +348,7 @@ class Config(ModelConfigDefaults, validate_all=False):
     @pydantic.validator("parts", each_item=True)
     def validate_each_part(cls, item, values):
         """Verify each part in the parts section. Craft-parts will re-validate them."""
-        completed_item = process_part_config(item)
-        return completed_item
+        return item
 
     @pydantic.validator("bases", pre=True)
     def validate_bases_presence(cls, bases, values):

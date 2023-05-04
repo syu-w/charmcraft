@@ -15,3 +15,5 @@
 # For further info, check https://github.com/canonical/charmcraft
 
 """Flag the sub package for files to be included when distributing."""
+
+from .lifecycle import CharmPackCommand

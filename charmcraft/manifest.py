@@ -26,7 +26,7 @@ from typing import Optional, List
 import yaml
 from craft_cli import CraftError
 
-from charmcraft import __version__, config, linters
+from charmcraft import config, linters
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ def create_manifest(
     :returns: Path to created manifest.yaml.
     """
     content = {
-        "charmcraft-version": __version__,
+        "charmcraft-version": "1",
         "charmcraft-started-at": started_at.isoformat() + "Z",
     }
 

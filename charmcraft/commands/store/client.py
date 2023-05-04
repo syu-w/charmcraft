@@ -27,7 +27,7 @@ from craft_cli import emit, CraftError
 from craft_store import endpoints
 from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
-from charmcraft import __version__, utils
+from charmcraft import utils
 
 
 TESTING_ENV_PREFIXES = ["TRAVIS", "AUTOPKGTEST_TMP"]

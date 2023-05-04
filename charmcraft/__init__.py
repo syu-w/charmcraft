@@ -20,6 +20,9 @@ import os
 
 import pkg_resources
 
+from .app import CharmCraft
+from .parts import CharmPartsLifecycle
+from . import models
 
 def _get_version():
     if os.getenv("SNAP_NAME") == "charmcraft":
