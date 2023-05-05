@@ -17,23 +17,36 @@
 import functools
 import tarfile
 from pathlib import Path
-from typing import cast, List
+from typing import cast, List, Type
 
 from craft_application import Application
-from craft_cli import emit
+from craft_cli import emit, GlobalArgument
 from overrides import override  # pyright: ignore[reportUnknownVariableType]
 
 from .commands import build
 from .commands import CharmPackCommand
 from .models import CharmMetadataModel, CharmProject
 from .parts import CharmPartsLifecycle
+from .provider import CharmProviderManager
 
 
 class CharmCraft(Application):
     """SourceCraft application definition."""
 
+    def __init__(  # noqa PLR0913 - Can't determine how to reduce arguments.
+        self,
+        name: str,
+        version: str,
+        summary: str,
+        manager: CharmProviderManager,
+        project_class: Type[CharmProject] = CharmProject,
+    ) -> None:
+        super().__init__(name, version, summary, manager, project_class)
+        destructive_mode_arg = GlobalArgument(
+    "destructive", "flag", None, "--destructive-mode", "Show the application version and exit"
+)
 
-    @override
+
     def create_package(self) -> Path:
         """Create the final package from the prime directory.
 
@@ -41,9 +54,7 @@ class CharmCraft(Application):
         """
 
         print(self.project)
-        self._pack_charm()
-
-        return packaged_name
+        return self._pack_charm()
 
     @override
     def generate_metadata(self) -> None:
@@ -81,9 +92,9 @@ class CharmCraft(Application):
         return cast(CharmProject, super().project)
 
 
-    def _pack_charm(self, parsed_args) -> List[Path]:
+    def _pack_charm(self) -> List[Path]:
         """Pack a charm."""
-        print(self.project)
+        print(self.config)
 
         # build
         emit.progress("Packing the charm.")

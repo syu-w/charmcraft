@@ -95,12 +95,13 @@ def launch_shell(*, cwd: Optional[pathlib.Path] = None) -> None:
 class Builder:
     """The package builder."""
 
-    def __init__(self, *, config, force, debug, shell, shell_after, measure):
+    def __init__(self, *, config, destructive_mode, force, debug, shell, shell_after, measure):
         self.force_packing = force
         self.debug = debug
         self.shell = shell
         self.shell_after = shell_after
         self.measure = measure
+        self.destructive_mode = destructive_mode
 
         self.charmdir = config.project.dirpath
         self.buildpath = self.charmdir / BUILD_DIRNAME
@@ -243,8 +244,7 @@ class Builder:
 
     @instrum.Timer("Builder run")
     def run(
-        self, bases_indices: Optional[List[int]] = None, destructive_mode: bool = False
-    ) -> List[str]:
+        self, bases_indices: Optional[List[int]] = None) -> List[str]:
         """Run build process.
 
         In managed-mode or destructive-mode, build for each bases configuration
@@ -257,13 +257,13 @@ class Builder:
         charms: List[str] = []
 
         managed_mode = env.is_charmcraft_running_in_managed_mode()
-        if not managed_mode and not destructive_mode:
+        if not managed_mode and not self.destructive_mode:
             providers.ensure_provider_is_available(self.provider)
 
         build_plan = providers.create_build_plan(
             bases=self.config.bases,
             bases_indices=bases_indices,
-            destructive_mode=destructive_mode,
+            destructive_mode=self.destructive_mode,
             managed_mode=managed_mode,
             provider=self.provider,
         )
@@ -275,7 +275,7 @@ class Builder:
         charms = []
         for plan in build_plan:
             emit.debug(f"Building for 'bases[{plan.bases_index:d}][{plan.build_on_index:d}]'.")
-            if managed_mode or destructive_mode:
+            if managed_mode or self.destructive_mode:
                 if self.shell:
                     # Execute shell in lieu of build.
                     launch_shell()
